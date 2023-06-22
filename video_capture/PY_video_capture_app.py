@@ -11,9 +11,9 @@ face_classifier = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_fro
 
 # select emotion classifier
 # MODEL_NAME = "1_base_model.h5"
-# MODEL_NAME = "2_weighted_loss.h5"
+MODEL_NAME = "2_weighted_loss.h5"
 # MODEL_NAME = "3_data_augmentation.h5"
-MODEL_NAME = "4_data_augm_weighted_loss.h5"
+# MODEL_NAME = "4_data_augm_weighted_loss.h5"
 MODEL_PATH = "D:/UNIR/Master_InteligenciaArtificial/2_Cuatrimestre/TFM/Develop/msc_ai_thesis_fer/video_capture/" + MODEL_NAME
 emotion_classifier = load_model(MODEL_PATH)
 
@@ -59,14 +59,28 @@ def facial_detection(frame):
         prediction = emotion_classifier.predict(model_input)[0]
         label = prediction.argmax()
         probability = np.max(prediction)
-        emotion = map_emotions[label]
-        print("{}: {:.1%}".format(emotion, probability))
-    
-    return rectangle, emotion, probability
+        emotion = "{}: {:.0f}%".format(map_emotions[label], 100 * probability)
+        print(emotion)
+
+        # add text to frame
+        text = emotion
+        text_font = cv2.FONT_HERSHEY_PLAIN
+        font_scale = 2
+        text_color = (255, 255, 255)
+        text_thick = 2
+        # line_type = cv2.LINE_AA
+        text_size, _ = cv2.getTextSize(text, text_font, font_scale, text_thick)
+        text_w, text_h = text_size
+        text_position = (x, y)
+        bg_start_point = (x - int(rectangle_thick / 2), y - text_h - font_scale - rectangle_thick - 1)
+        bg_end_point = (x + text_w, y - rectangle_thick)
+        bg_thick = -1
+        cv2.rectangle(frame, bg_start_point, bg_end_point, rectangle_color, bg_thick)
+        cv2.putText(frame, text, text_position, text_font, font_scale, text_color, text_thick)
 
 # define function to show in real time the captured images
 def view_webcam():
-    """Function show in real time the captured images
+    """Function to show in real time the captured images
        Args:
            None
        Returns:
@@ -81,21 +95,20 @@ def view_webcam():
     if not ret:
         raise Exception("Failed to find video capture device")
     
-    # capture frame and show within app windows
-    raw_image, emotion, probability = facial_detection(frame)
-    raw_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
-    raw_image = Image.fromarray(raw_image)
+    # transform the image to gray scale to apply face detection classifier
+    frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    
+    # emotion classifier
+    facial_detection(frame)
 
     # captured image to app photoimage
+    raw_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+    raw_image = Image.fromarray(raw_image)
     app_image = ImageTk.PhotoImage(image=raw_image)
     
     # display photoimage in the corresponding app label
     label_camera.photo_image = app_image
     label_camera.configure(image=app_image)
-    
-    # display probability and emotion in the corresponding app labels
-    label_probability.configure(text="I am {:.1%} certain".format(probability))
-    label_emotion.configure(text="that you are: {}".format(emotion))
 
     # repeat the same process after every N_TIME seconds
     N_TIME = 10
@@ -131,17 +144,9 @@ app.configure(width=800, height=500, background="Turquoise", padx=10, pady=10)
 label_camera = Label(app)
 label_camera.grid(row=0, column=0, columnspan=2)
 
-# create label to display the probability asfter recognition
-label_probability = Label(app, font=("Helvetica", 24), fg='white', background="Turquoise")
-label_probability.grid(row=1, column=1, pady=(10, ))
-
-# create label to display the emotion after recognition
-label_emotion = Label(app, text="that you are: HAPPY", font=("Helvetica", 24), fg='white', background="Turquoise")
-label_emotion.grid(row=2, column=1)
-
 # create a exit button to close the window
 exit_button = Button(app, text="Close", font=("Helvetica", 24), fg='black', background="LightGrey", command=app.destroy)
-exit_button.grid(row=1, column=0, rowspan=2, padx=(50, ), pady=(10, ))
+exit_button.grid(row=1, column=0, rowspan=2, columnspan=2, padx=(50, 50), pady=(15, ))
 
 # trigger video capture and emotion recognition functions
 app.after(10, start_webcam)

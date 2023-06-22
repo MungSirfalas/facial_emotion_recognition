@@ -9,9 +9,9 @@ face_classifier = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_fro
 
 # emotion classifier
 # MODEL_NAME = "1_base_model.h5"
-# MODEL_NAME = "2_weighted_loss.h5"
+MODEL_NAME = "2_weighted_loss.h5"
 # MODEL_NAME = "3_data_augmentation.h5"
-MODEL_NAME = "4_data_augm_weighted_loss.h5"
+# MODEL_NAME = "4_data_augm_weighted_loss.h5"
 MODEL_PATH = "D:/UNIR/Master_InteligenciaArtificial/2_Cuatrimestre/TFM/Develop/msc_ai_thesis_fer/video_capture/" + MODEL_NAME
 emotion_classifier = load_model(MODEL_PATH)
 
@@ -69,7 +69,7 @@ while True:
         label = prediction.argmax()
         probability = np.max(prediction)
         emotion = "{}: {:.2f}%".format(map_emotions[label], 100 * probability)
-        print(emotion)
+        print("{}: {:.1%}".format(emotion, probability))
 
         # add text to frame
         text = emotion
