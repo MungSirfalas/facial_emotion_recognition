@@ -10,10 +10,10 @@ from keras.preprocessing import image
 face_classifier = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
 # select emotion classifier
-# MODEL_NAME = "1_base_model.h5"
-MODEL_NAME = "2_weighted_loss.h5"
-# MODEL_NAME = "3_data_augmentation.h5"
-# MODEL_NAME = "4_data_augm_weighted_loss.h5"
+# MODEL_NAME = "1_fer_da.h5"
+# MODEL_NAME = '2_fer_sda.h5'
+# MODEL_NAME = "3_aux_da.h5"
+MODEL_NAME = "4_aux_da.h5" #best model
 MODEL_PATH = "D:/UNIR/Master_InteligenciaArtificial/2_Cuatrimestre/TFM/Develop/msc_ai_thesis_fer/video_capture/" + MODEL_NAME
 emotion_classifier = load_model(MODEL_PATH)
 
