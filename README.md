@@ -3,4 +3,4 @@ Repository for a simple facial expression recognition tool. The app was develope
 
 Given that part of the images utilized to train the classifiers are from private datasets, the complete training dataset utilized for this project has not been published. 
 
-The Ecuadorian Facial Expression (EFE) dataset can be found at: https://www.kaggle.com/datasets/cesarron/ecuadorian-facial-expression-efe-dataset
+Part of the images were taken from the Ecuadorian Facial Expression (EFE) dataset that can be found at: https://www.kaggle.com/datasets/cesarron/ecuadorian-facial-expression-efe-dataset
